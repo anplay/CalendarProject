@@ -3,23 +3,31 @@ package com.diosoft.sample.calendar.common;
 import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 
 public class Event implements Serializable {
 
+    private final UUID id;
+    private final String title;
     private final String name;
     private final String description;
     private final GregorianCalendar startTime;
     private final GregorianCalendar endTime;
     private final List<Person> attenders;
 
-    public Event(Builder builder) {
+
+    private Event(Builder builder) {
+        this.id = new UUID((long) (Math.random() * 1000) +1,(long) (Math.random() * 1000) +1);
+        this.title = builder.title;
         this.name = builder.name;
         this.description = builder.description;
         this.startTime = builder.startTime;
         this.attenders = builder.attenders;
         this.endTime = builder.endTime;
+
     }
 
     public String getName() {
@@ -81,6 +89,7 @@ public class Event implements Serializable {
     }
 
     public static class Builder {
+        private String title;
         private String name;
         private String description;
         private GregorianCalendar startTime;
@@ -91,11 +100,17 @@ public class Event implements Serializable {
         }
 
         public Builder(Event origin) {
+            this.title = origin.title;
             this.name = origin.name;
             this.description = origin.description;
             this.startTime = origin.startTime;
             this.attenders = origin.attenders;
             this.endTime = origin.endTime;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
         }
 
         public Builder description(String description) {
