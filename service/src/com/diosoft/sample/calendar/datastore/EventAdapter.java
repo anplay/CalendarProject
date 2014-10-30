@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 @XmlRootElement
@@ -18,8 +18,8 @@ public class EventAdapter implements Serializable {
 
     private String name;
     private String description;
-    private GregorianCalendar startTime;
-    private GregorianCalendar endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     private List<PersonAdapter> attenders;
 
@@ -58,19 +58,19 @@ public class EventAdapter implements Serializable {
         this.description = description;
     }
 
-    public GregorianCalendar getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(GregorianCalendar startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public GregorianCalendar getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(GregorianCalendar endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 

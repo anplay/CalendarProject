@@ -4,9 +4,10 @@ import com.diosoft.sample.calendar.common.Event;
 import com.diosoft.sample.calendar.common.Person;
 import com.diosoft.sample.calendar.datastore.CalendarDataStore;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import static java.util.Arrays.asList;
@@ -22,15 +23,17 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public void addEvent2(String name, String description, GregorianCalendar startDate, GregorianCalendar endDate, List<Person> attenders) {
+    public void addEvent2(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) {
 
         dataStore.publish(new Event.Builder()
-                .name(name)
-                .description(description)
-                .startTime(startDate)
-                .endTime(endDate)
-                .attenders(attenders)
-                .build()
+                        .generateId(UUID.randomUUID())
+                        .title(title)
+                        .name(name)
+                        .description(description)
+                        .startTime(startDate)
+                        .endTime(endDate)
+                        .attenders(attenders)
+                        .build()
         );
 
         logger.info("Published even on service side " + name);

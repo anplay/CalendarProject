@@ -5,12 +5,12 @@ import com.diosoft.sample.calendar.common.Person;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CalendarService extends Remote {
 
-    void addEvent2(String name, String description, GregorianCalendar startDate, GregorianCalendar endDate, List<Person> attenders) throws RemoteException;
+    void addEvent2(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) throws RemoteException;
 
     Event removeEvent(String name) throws RemoteException;
 

@@ -5,6 +5,7 @@ import com.diosoft.sample.calendar.common.Person;
 import com.diosoft.sample.calendar.datastore.CalendarDataStore;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -16,13 +17,16 @@ public class CalendarServiceImplTest {
     @Test
     public void testAddEvent() throws Exception {
         // initialize variable inputs
-        GregorianCalendar inputStartDate = new GregorianCalendar(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
-        GregorianCalendar inputEndDate = new GregorianCalendar(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        LocalDateTime inputStartDate = LocalDateTime.of(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        LocalDateTime inputEndDate = LocalDateTime.of(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        String inputTitle = "football";
         String inputName = "sampleEvent";
         String inputDescription = "sampleEventDescription";
         List<Person> attenders = Arrays.asList(new Person.Builder().firstName("aName").build());
 
         Event expectedEvent = new Event.Builder()
+                .generateId(UUID.randomUUID())
+                .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
                 .startTime(inputStartDate)
@@ -37,7 +41,7 @@ public class CalendarServiceImplTest {
         CalendarService service = new CalendarServiceImpl(dataStore);
 
         // invoke method on class to test
-        service.addEvent2(inputName, inputDescription, inputStartDate, inputEndDate, attenders);
+        service.addEvent2(inputTitle,inputName, inputDescription, inputStartDate, inputEndDate, attenders);
 
         // assert return value
 
@@ -51,6 +55,7 @@ public class CalendarServiceImplTest {
         String inputName = "sampleEvent";
 
         Event expectedEvent = new Event.Builder()
+                .generateId(UUID.randomUUID())
                 .name(inputName)
                 .build();
 
@@ -76,6 +81,7 @@ public class CalendarServiceImplTest {
         String inputName = "sampleEvent";
 
         Event expectedEvent = new Event.Builder()
+                .generateId(UUID.randomUUID())
                 .name(inputName)
                 .build();
 
@@ -99,8 +105,9 @@ public class CalendarServiceImplTest {
     @Test
     public void testAddAttenderWithNull() throws Exception {
         // initialize variable inputs
-        GregorianCalendar inputStartDate = new GregorianCalendar(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
-        GregorianCalendar inputEndDate = new GregorianCalendar(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        LocalDateTime inputStartDate = LocalDateTime.of(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        LocalDateTime inputEndDate = LocalDateTime.of(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        String inputTitle = "football";
         String inputName = "sampleEvent";
         String inputDescription = "sampleEventDescription";
         Person inputPerson = new Person.Builder().firstName("aName").build();
@@ -110,6 +117,8 @@ public class CalendarServiceImplTest {
 
 
         Event expectedNewEvent = new Event.Builder()
+                .generateId(UUID.randomUUID())
+                .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
                 .startTime(inputStartDate)
@@ -139,8 +148,9 @@ public class CalendarServiceImplTest {
     @Test
     public void testAddAttender() throws Exception {
         // initialize variable inputs
-        GregorianCalendar inputStartDate = new GregorianCalendar(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
-        GregorianCalendar inputEndDate = new GregorianCalendar(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        LocalDateTime inputStartDate = LocalDateTime.of(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        LocalDateTime inputEndDate = LocalDateTime.of(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        String inputTitle = "football";
         String inputName = "sampleEvent";
         String inputDescription = "sampleEventDescription";
         Person inputPerson = new Person.Builder().firstName("aName").build();
@@ -149,6 +159,8 @@ public class CalendarServiceImplTest {
         List<Person> newAttenders = Arrays.asList(inputPerson,inputNewPerson);
 
         Event expectedEvent = new Event.Builder()
+                .generateId(UUID.randomUUID())
+                .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
                 .startTime(inputStartDate)
@@ -156,6 +168,8 @@ public class CalendarServiceImplTest {
                 .attenders(attenders)
                 .build();
         Event expectedNewEvent = new Event.Builder()
+                .generateId(UUID.randomUUID())
+                .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
                 .startTime(inputStartDate)
@@ -184,8 +198,9 @@ public class CalendarServiceImplTest {
     @Test
     public void testAddAttenderMulti() throws Exception {
         // initialize variable inputs
-        GregorianCalendar inputStartDate = new GregorianCalendar(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
-        GregorianCalendar inputEndDate = new GregorianCalendar(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        LocalDateTime inputStartDate = LocalDateTime.of(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        LocalDateTime inputEndDate = LocalDateTime.of(2008, Calendar.APRIL,Calendar.TUESDAY,10, 12);
+        String inputTitle = "football";
         String inputName = "sampleEvent";
         String inputDescription = "sampleEventDescription";
         Person inputPerson = new Person.Builder().firstName("aName").build();
@@ -195,6 +210,8 @@ public class CalendarServiceImplTest {
         List<Person> newAttenders = Arrays.asList(inputPerson,inputNewPerson,inputNewPerson2);
 
         Event expectedEvent = new Event.Builder()
+                .generateId(UUID.randomUUID())
+                .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
                 .startTime(inputStartDate)
@@ -202,6 +219,8 @@ public class CalendarServiceImplTest {
                 .attenders(attenders)
                 .build();
         Event expectedNewEvent = new Event.Builder()
+                .generateId(UUID.randomUUID())
+                .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
                 .startTime(inputStartDate)
