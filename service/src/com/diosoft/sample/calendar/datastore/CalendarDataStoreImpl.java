@@ -7,28 +7,46 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class CalendarDataStoreImpl implements CalendarDataStore {
 
-    private final Map<String, Event> store = new HashMap<>();
+    private final Map<UUID, Event> store = new HashMap<>();
 
     @Override
     public void publish(Event event) {
-        store.put(event.getName(), event);
+        store.put(event.getUuid(), event);
         persistEvent(event);
     }
 
     @Override
-    public Event remove(String eventName) {
-        Event event = store.get(eventName);
-        store.remove(eventName);
+    public Event remove(UUID eventUUID) {
+        Event event = store.get(eventUUID);
+        store.remove(eventUUID);
         return event;
     }
 
     @Override
-    public Event getEvent(String name) {
-        return store.get(name);
+    public Event getEvent(UUID eventUUID) {
+        return store.get(eventUUID);
+    }
+
+    @Override
+    public Map<UUID, Event> getMapEvents() {
+        return store;
+    }
+
+    //TODO: Andriy Paliy
+    @Override
+    public Map<String, List<UUID>> getMapUniqueTitle() {
+        return null;
+    }
+
+    //TODO: Andriy Paliy
+    public Event searchByTitle() {
+        return null;
     }
 
     private void persistEvent(Event expectedEvent){
