@@ -1,6 +1,7 @@
 package com.diosoft.sample.calendar.datastore;
 
 import com.diosoft.sample.calendar.common.Event;
+import com.diosoft.sample.calendar.common.Person;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -47,6 +48,11 @@ public class CalendarDataStoreImpl implements CalendarDataStore {
     //TODO: Andriy Paliy
     public Event searchByTitle() {
         return null;
+    }
+
+    @Override
+    public List<Person> getAttenders(UUID eventUUID) {
+        return store.get(eventUUID).getAttenders();
     }
 
     private void persistEvent(Event expectedEvent){

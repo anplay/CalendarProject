@@ -1,6 +1,7 @@
 package com.diosoft.sample.calendar.datastore;
 
 import com.diosoft.sample.calendar.common.Event;
+import com.diosoft.sample.calendar.common.Person;
 
 import java.util.List;
 import java.util.Map;
@@ -17,4 +18,6 @@ public interface CalendarDataStore {
     Map<UUID, Event> getMapEvents();
 
     Map<String, List<UUID>> getMapUniqueTitle();
+
+    List<Person> getAttenders(UUID eventUUID);
 }
