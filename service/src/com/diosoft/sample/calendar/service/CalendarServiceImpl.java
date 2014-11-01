@@ -26,7 +26,7 @@ public class CalendarServiceImpl implements CalendarService {
     public void addEvent2(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) {
 
         dataStore.publish(new Event.Builder()
-                        .generateId(UUID.randomUUID())
+                        .setId(UUID.randomUUID())
                         .title(title)
                         .name(name)
                         .description(description)
