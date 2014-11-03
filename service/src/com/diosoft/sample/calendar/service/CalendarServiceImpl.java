@@ -26,7 +26,7 @@ public class CalendarServiceImpl implements CalendarService {
     public void addEvent2(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) {
 
         dataStore.publish(new Event.Builder()
-                        .generateId(UUID.randomUUID())
+                        .setId(UUID.randomUUID())
                         .title(title)
                         .name(name)
                         .description(description)
@@ -40,20 +40,25 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public Event removeEvent(String name) {
-        return dataStore.remove(name);
+    public Event removeEvent(UUID uuid) {
+        return dataStore.remove(uuid);
 
     }
 
     @Override
-    public Event getEvent(String name) {
-        return dataStore.getEvent(name);
+    public Event getEvent(UUID uuid) {
+        return dataStore.getEvent(uuid);
     }
 
     @Override
-    public Event addAttender(String name, Person... newPersons) {
+    public List<Person> getAttenders(UUID uuid) {
+        return dataStore.getAttenders(uuid);
+    }
 
-        Event originEvent = dataStore.remove(name);
+    @Override
+    public Event addAttender(UUID uuid, Person... newPersons) {
+
+        Event originEvent = dataStore.remove(uuid);
         if (originEvent == null) {
             return null;
         }

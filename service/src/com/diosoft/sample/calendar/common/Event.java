@@ -76,7 +76,7 @@ public class Event implements Serializable {
             this.endTime = origin.endTime;
         }
 
-        public Builder generateId(UUID uuid) {
+        public Builder setId(UUID uuid) {
             this.uuid = uuid;
             return this;
         }

@@ -27,7 +27,7 @@ public class CalendarDataStoreImplTest {
         List<Person> attenders = Arrays.asList(new Person.Builder().firstName("aName").build());
 
         Event expectedEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
@@ -45,7 +45,7 @@ public class CalendarDataStoreImplTest {
         dataStore.publish(expectedEvent);
 
         // assert return value
-        Event returnedValue = dataStore.getEvent(inputName);
+        Event returnedValue = dataStore.getEvent(expectedEvent.getUuid());
 
         assertEquals(expectedEvent, returnedValue);
 
@@ -63,7 +63,7 @@ public class CalendarDataStoreImplTest {
         List<Person> attenders = Arrays.asList(new Person.Builder().firstName("aName").build());
 
         Event expectedEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
@@ -79,10 +79,10 @@ public class CalendarDataStoreImplTest {
         dataStore.publish(expectedEvent);
 
         // invoke method on class to test
-        Event returnedValue = dataStore.remove(inputName);
+        Event returnedValue = dataStore.remove(expectedEvent.getUuid());
 
         // assert return value
-        Event returnedEmptyValue = dataStore.remove(inputName);
+        Event returnedEmptyValue = dataStore.remove(expectedEvent.getUuid());
 
         assertEquals(expectedEvent, returnedValue);
         assertNull(returnedEmptyValue);

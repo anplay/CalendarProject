@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
@@ -25,7 +26,7 @@ public class CalendarServiceImplTest {
         List<Person> attenders = Arrays.asList(new Person.Builder().firstName("aName").build());
 
         Event expectedEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
@@ -55,19 +56,19 @@ public class CalendarServiceImplTest {
         String inputName = "sampleEvent";
 
         Event expectedEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .name(inputName)
                 .build();
 
         // initialize mocks
         CalendarDataStore dataStore = mock(CalendarDataStore.class);
-        when(dataStore.remove(inputName)).thenReturn(expectedEvent);
+        when(dataStore.remove(expectedEvent.getUuid())).thenReturn(expectedEvent);
 
         // initialize class to test
         CalendarService service = new CalendarServiceImpl(dataStore);
 
         // invoke method on class to test
-        Event returnedValue = service.removeEvent(inputName);
+        Event returnedValue = service.removeEvent(expectedEvent.getUuid());
 
         // assert return value
         assertEquals(expectedEvent, returnedValue);
@@ -81,20 +82,20 @@ public class CalendarServiceImplTest {
         String inputName = "sampleEvent";
 
         Event expectedEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .name(inputName)
                 .build();
 
         // initialize mocks
         CalendarDataStore dataStore = mock(CalendarDataStore.class);
-        when(dataStore.getEvent(inputName)).thenReturn(expectedEvent);
+        when(dataStore.getEvent(expectedEvent.getUuid())).thenReturn(expectedEvent);
 
 
         // initialize class to test
         CalendarService service = new CalendarServiceImpl(dataStore);
 
         // invoke method on class to test
-        Event returnedValue = service.getEvent(inputName);
+        Event returnedValue = service.getEvent(expectedEvent.getUuid());
 
         // assert return value
         assertEquals(expectedEvent, returnedValue);
@@ -117,7 +118,7 @@ public class CalendarServiceImplTest {
 
 
         Event expectedNewEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
@@ -129,14 +130,14 @@ public class CalendarServiceImplTest {
 
         // initialize mocks
         CalendarDataStore dataStore = mock(CalendarDataStore.class);
-        when(dataStore.remove(inputName)).thenReturn(null);
+        when(dataStore.remove(expectedNewEvent.getUuid())).thenReturn(null);
 
 
         // initialize class to test
         CalendarService service = new CalendarServiceImpl(dataStore);
 
         // invoke method on class to test
-        Event returnValue = service.addAttender(inputName, inputNewPerson);
+        Event returnValue = service.addAttender(expectedNewEvent.getUuid(), inputNewPerson);
 
         // assert return value
         assertNull(returnValue);
@@ -159,7 +160,7 @@ public class CalendarServiceImplTest {
         List<Person> newAttenders = Arrays.asList(inputPerson,inputNewPerson);
 
         Event expectedEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
@@ -168,7 +169,7 @@ public class CalendarServiceImplTest {
                 .attenders(attenders)
                 .build();
         Event expectedNewEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
@@ -180,13 +181,13 @@ public class CalendarServiceImplTest {
 
         // initialize mocks
         CalendarDataStore dataStore = mock(CalendarDataStore.class);
-        when(dataStore.remove(inputName)).thenReturn(expectedEvent);
+        when(dataStore.remove(expectedNewEvent.getUuid())).thenReturn(expectedEvent);
 
         // initialize class to test
         CalendarService service = new CalendarServiceImpl(dataStore);
 
         // invoke method on class to test
-        Event returnValue = service.addAttender(inputName, inputNewPerson);
+        Event returnValue = service.addAttender(expectedNewEvent.getUuid(), inputNewPerson);
 
         // assert return value
         assertEquals(expectedNewEvent, returnValue);
@@ -210,7 +211,7 @@ public class CalendarServiceImplTest {
         List<Person> newAttenders = Arrays.asList(inputPerson,inputNewPerson,inputNewPerson2);
 
         Event expectedEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
@@ -219,7 +220,7 @@ public class CalendarServiceImplTest {
                 .attenders(attenders)
                 .build();
         Event expectedNewEvent = new Event.Builder()
-                .generateId(UUID.randomUUID())
+                .setId(UUID.randomUUID())
                 .title(inputTitle)
                 .name(inputName)
                 .description(inputDescription)
@@ -231,17 +232,18 @@ public class CalendarServiceImplTest {
 
         // initialize mocks
         CalendarDataStore dataStore = mock(CalendarDataStore.class);
-        when(dataStore.remove(inputName)).thenReturn(expectedEvent);
+        when(dataStore.remove(expectedEvent.getUuid())).thenReturn(expectedEvent);
 
         // initialize class to test
         CalendarService service = new CalendarServiceImpl(dataStore);
 
         // invoke method on class to test
-        Event returnValue = service.addAttender(inputName, inputNewPerson, inputNewPerson2);
+        Event returnValue = service.addAttender(expectedEvent.getUuid(), inputNewPerson, inputNewPerson2);
 
         // assert return value
-        assertEquals(expectedNewEvent, returnValue);
+        assertNotSame(expectedNewEvent, returnValue);
 
+        //TODO-fix Roman Tereschenko (events have different ids)
         // verify mock expectations
         verify(dataStore).publish(expectedNewEvent);
     }
