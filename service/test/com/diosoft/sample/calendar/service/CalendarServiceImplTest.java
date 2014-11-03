@@ -247,4 +247,36 @@ public class CalendarServiceImplTest {
         // verify mock expectations
         verify(dataStore).publish(expectedNewEvent);
     }
+
+   @Test
+   public void testGetAttenders() throws Exception {
+       // initialize variable inputs
+       String inputName = "Event";
+       Person inputPerson = new Person.Builder().firstName("NAME").build();
+
+       Event event = new Event.Builder()
+               .setId(UUID.randomUUID())
+               .name(inputName)
+               .attenders(inputPerson)
+               .build();
+
+       List<Person> expectedAttenders = event.getAttenders();
+
+       // initialize mocks
+       CalendarDataStore dataStore = mock(CalendarDataStore.class);
+       when(dataStore.getAttenders(event.getUuid())).thenReturn(expectedAttenders);
+
+       // initialize class to test
+       CalendarService service = new CalendarServiceImpl(dataStore);
+
+       // invoke method on class to test
+       List<Person> returnedAttenders = service.getAttenders(event.getUuid());
+
+       // assert return value
+       assertEquals(expectedAttenders, returnedAttenders);
+
+       // verify mock expectations
+       verify(dataStore).getAttenders(event.getUuid());
+   }
+
 }
