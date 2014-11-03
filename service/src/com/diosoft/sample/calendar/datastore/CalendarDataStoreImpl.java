@@ -41,6 +41,7 @@ public class CalendarDataStoreImpl implements CalendarDataStore {
         return store;
     }
 
+
     //TODO: Andriy Paliy
     private Map<String, List<UUID>> getMapUniqueTitle(HashMap<UUID, Event> eventsMap) {
         HashSet<String> listUniqueTitle = new HashSet<>();
@@ -86,7 +87,6 @@ public class CalendarDataStoreImpl implements CalendarDataStore {
         }
     }
 
-    @Override
     public List<Person> getAttenders(UUID eventUUID) {
         return store.get(eventUUID).getAttenders();
     }

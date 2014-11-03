@@ -2,7 +2,6 @@ package com.diosoft.sample.calendar.datastore;
 
 import com.diosoft.sample.calendar.common.Event;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,5 +15,4 @@ public interface CalendarDataStore {
 
     Map<UUID, Event> getMapEvents();
 
-    Map<String, List<UUID>> getMapUniqueTitle();
 }
