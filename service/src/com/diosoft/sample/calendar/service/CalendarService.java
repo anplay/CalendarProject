@@ -11,7 +11,9 @@ import java.util.UUID;
 
 public interface CalendarService extends Remote {
 
-    void addEvent2(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) throws RemoteException;
+    void createEvent(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) throws RemoteException;
+
+    void addEvent(Event event) throws RemoteException;
 
     Event removeEvent(UUID uuid) throws RemoteException;
 

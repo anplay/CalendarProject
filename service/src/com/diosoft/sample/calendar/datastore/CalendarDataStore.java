@@ -18,5 +18,4 @@ public interface CalendarDataStore {
     Map<UUID, Event> getMapEvents();
 
     List<Person> getAttenders(UUID uuid);
-
 }
