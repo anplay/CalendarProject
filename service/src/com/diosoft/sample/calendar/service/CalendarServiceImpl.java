@@ -4,6 +4,7 @@ import com.diosoft.sample.calendar.common.Event;
 import com.diosoft.sample.calendar.common.Person;
 import com.diosoft.sample.calendar.datastore.CalendarDataStore;
 
+import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public void addEvent2(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) {
+    public void createEvent(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) throws RemoteException {
 
         dataStore.publish(new Event.Builder()
                         .setId(UUID.randomUUID())
@@ -36,7 +37,15 @@ public class CalendarServiceImpl implements CalendarService {
                         .build()
         );
 
-        logger.info("Published even on service side " + name);
+        logger.info("Published event on service side " + name);
+    }
+
+    @Override
+    public void addEvent(Event event) throws RemoteException {
+
+        dataStore.publish(event);
+
+        logger.info("Added event on service side " + event.getName());
     }
 
     @Override
@@ -53,7 +62,7 @@ public class CalendarServiceImpl implements CalendarService {
     @Override
     public List<Person> getAttenders(UUID uuid) {
         return dataStore.getAttenders(uuid);
-    }
+        }
 
     @Override
     public Event addAttender(UUID uuid, Person... newPersons) {
