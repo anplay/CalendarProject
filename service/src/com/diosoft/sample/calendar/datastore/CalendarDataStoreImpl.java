@@ -6,14 +6,16 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class CalendarDataStoreImpl implements CalendarDataStore {
 
-    private final Map<UUID, Event> store = new HashMap<>();
+    private final HashMap<UUID, Event> store = new HashMap<>();
 
     @Override
     public void publish(Event event) {
@@ -34,19 +36,53 @@ public class CalendarDataStoreImpl implements CalendarDataStore {
     }
 
     @Override
-    public Map<UUID, Event> getMapEvents() {
+    public HashMap<UUID, Event> getMapEvents() {
         return store;
     }
 
     //TODO: Andriy Paliy
-    @Override
-    public Map<String, List<UUID>> getMapUniqueTitle() {
-        return null;
+    private Map<String, List<UUID>> getMapUniqueTitle(HashMap<UUID, Event> eventsMap) {
+        HashSet<String> listUniqueTitle = new HashSet<>();
+        Map<String, List<UUID>> mapUniqueTitle = new HashMap<>();
+
+        if ((eventsMap.size() == 0) || (eventsMap == null)) {
+            System.err.println("Events didn't find in the Calendar!");
+            return null;
+        }
+
+        for (Map.Entry<UUID, Event> entry: eventsMap.entrySet()) {
+           listUniqueTitle.add(entry.getValue().getTitle().toLowerCase());
+        }
+
+        for (String uniqueTitle: listUniqueTitle) {
+            ArrayList<UUID> listUUID = null;
+            for (Map.Entry<UUID, Event> entry: eventsMap.entrySet()) {
+                if (uniqueTitle.equals(entry.getValue().getTitle().toLowerCase())) {
+                    listUUID.add(entry.getKey());
+                }
+            }
+            mapUniqueTitle.put(uniqueTitle, listUUID);
+        }
+        return mapUniqueTitle;
     }
 
     //TODO: Andriy Paliy
-    public Event searchByTitle() {
-        return null;
+    public List<Event> searchByTitle(String title) {
+
+        HashMap<UUID, Event> allEventsMap = getMapEvents();
+        Map<String , List<UUID>> resultMap = getMapUniqueTitle(allEventsMap);
+        List<Event> eventList = null;
+
+        if ((resultMap.containsKey(title))) {
+            List<UUID> listUUID = resultMap.get(title.toLowerCase());
+            for (UUID uuidTemp: listUUID) {
+                eventList.add(allEventsMap.get(uuidTemp));
+            }
+            return eventList;
+        } else {
+            System.err.println("Events with title: " + title + " didn't find!");
+            return null;
+        }
     }
 
     private void persistEvent(Event expectedEvent){
