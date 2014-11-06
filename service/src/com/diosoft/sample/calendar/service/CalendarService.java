@@ -21,5 +21,9 @@ public interface CalendarService extends Remote {
 
     Event getEvent(UUID uuid) throws RemoteException;
 
-    List<Person> getAttenders(UUID uuid);
+    List<Person> getAttenders(UUID uuid) throws RemoteException;
+
+    List<Event> searchEventByDateTime(LocalDateTime date1) throws RemoteException;
+
+    List<Event> searchEventByDateTime(LocalDateTime date1, LocalDateTime date2);
 }

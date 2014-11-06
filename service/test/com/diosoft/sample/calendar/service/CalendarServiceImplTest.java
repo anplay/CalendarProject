@@ -3,9 +3,11 @@ package com.diosoft.sample.calendar.service;
 import com.diosoft.sample.calendar.common.Event;
 import com.diosoft.sample.calendar.common.Person;
 import com.diosoft.sample.calendar.datastore.CalendarDataStore;
+import com.diosoft.sample.calendar.datastore.CalendarDataStoreImpl;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -312,5 +314,63 @@ public class CalendarServiceImplTest {
        // verify mock expectations
        verify(dataStore).getAttenders(event.getUuid());
    }
+
+    @Test
+    public void testSearchByDate() throws Exception {
+        // initialize inputs
+        Person inputPerson = new Person.Builder().firstName("aName").build();
+        Person inputNewPerson = new Person.Builder().firstName("aName2").build();
+        List<Person> attenders = Arrays.asList(inputPerson);
+        List<Person> newAttenders = Arrays.asList(inputPerson, inputNewPerson);
+
+        Event Event1 = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .title("Estimation meeting")
+                .name("estimation")
+                .description("scrum... is it OK")
+                .startTime( LocalDateTime.of( 2008, Month.APRIL,  20, 10, 00))
+                .endTime( LocalDateTime.of( 2008, Month.APRIL,  20, 11, 00))
+                .attenders(attenders)
+                .build();
+
+        Event Event2 = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .title("3way chat")
+                .name("meeting")
+                .description("Who should fix the build")
+                .startTime( LocalDateTime.of( 2008, Month.APRIL,  20, 15, 00))
+                .endTime( LocalDateTime.of( 2008, Month.APRIL,  20, 16, 00))
+                .attenders(newAttenders)
+                .build();
+
+        Event Event3 = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .title("3way chat11")
+                .name("meeting112")
+                .description("Details needed")
+                .startTime( LocalDateTime.of( 2008, Month.APRIL,  20, 15, 30))
+                .endTime( LocalDateTime.of( 2008, Month.APRIL,  20, 16, 00))
+                .attenders(newAttenders)
+                .build();
+
+        //TODO: Do something
+        CalendarDataStore dataStore =new CalendarDataStoreImpl();
+        CalendarService service = new CalendarServiceImpl(dataStore);
+
+        service.addEvent(Event1);
+        service.addEvent(Event2);
+        service.addEvent(Event3);
+
+        List<Event> returnValue = service.searchEventByDateTime(LocalDateTime.of( 2008, Month.APRIL,  20, 15, 30));
+        ArrayList expectedListOfEvent = new ArrayList();
+        expectedListOfEvent.add(Event2);
+        expectedListOfEvent.add(Event3);
+
+        returnValue.removeAll(expectedListOfEvent);
+
+        assertEquals(0, returnValue.size());
+
+    }
+
 
 }

@@ -7,12 +7,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class CalendarDataStoreImpl implements CalendarDataStore {
 
@@ -102,5 +98,18 @@ public class CalendarDataStoreImpl implements CalendarDataStore {
         } catch (JAXBException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<LocalDateTime> getEventDates(UUID uuid) {
+        return Arrays.asList(store.get(uuid).getStartTime(), store.get(uuid).getEndTime());
+    }
+
+    @Override
+    public Map<UUID, List<LocalDateTime>> getMapDates() {
+        Map<UUID, List<LocalDateTime>> dateStore = new HashMap<>();
+        for (UUID uuid: store.keySet()) {
+            dateStore.put(uuid, getEventDates(uuid));
+        }
+        return dateStore;
     }
 }

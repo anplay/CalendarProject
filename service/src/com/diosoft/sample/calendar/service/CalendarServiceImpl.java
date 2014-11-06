@@ -6,10 +6,9 @@ import com.diosoft.sample.calendar.datastore.CalendarDataStore;
 
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -80,5 +79,30 @@ public class CalendarServiceImpl implements CalendarService {
         dataStore.publish(newEvent
         );
         return newEvent;
+    }
+
+    @Override
+    public List<Event> searchEventByDateTime(LocalDateTime date1){
+        List<Event> foundEvents = new ArrayList();
+        Map<UUID, Event> allEvents = dataStore.getMapEvents();
+        logger.info("Keys " + allEvents.keySet());
+        if (allEvents != null || allEvents.size() !=0)
+        {
+            foundEvents.addAll(allEvents.keySet().stream().filter(uuid -> (date1.compareTo(allEvents.get(uuid).getStartTime()) >= 0) && date1.compareTo(allEvents.get(uuid).getEndTime()) < 0).map(this::getEvent).collect(Collectors.toList()));
+            return foundEvents;
+        }
+        throw new NoSuchElementException("Unfortunately cannot retrieve events list to search");
+    }
+
+    @Override
+    public List<Event> searchEventByDateTime(LocalDateTime date1, LocalDateTime date2) {
+        List<Event> foundEvents = new ArrayList();
+        Map<UUID, Event> allEvents = dataStore.getMapEvents();
+        if (allEvents != null || allEvents.size() !=0)
+        {
+            foundEvents.addAll(allEvents.keySet().stream().filter(uuid -> (date1.compareTo(allEvents.get(uuid).getStartTime()) >= 0) && date2.compareTo(allEvents.get(uuid).getEndTime()) <= 0).map(this::getEvent).collect(Collectors.toList()));
+            return foundEvents;
+        }
+        throw new NoSuchElementException("Unfortunately cannot retrieve events list to search");
     }
 }
