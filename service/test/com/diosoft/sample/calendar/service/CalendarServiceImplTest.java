@@ -298,7 +298,8 @@ public class CalendarServiceImplTest {
 
        // initialize mocks
        CalendarDataStore dataStore = mock(CalendarDataStore.class);
-       when(dataStore.getAttenders(event.getUuid())).thenReturn(expectedAttenders);
+
+       when(dataStore.getEventsMap().get(event.getUuid()).getAttenders()).thenReturn(expectedAttenders);
 
        // initialize class to test
        CalendarService service = new CalendarServiceImpl(dataStore);
@@ -310,7 +311,7 @@ public class CalendarServiceImplTest {
        assertEquals(expectedAttenders, returnedAttenders);
 
        // verify mock expectations
-       verify(dataStore).getAttenders(event.getUuid());
+       verify(dataStore).getEventsMap().get(event.getUuid()).getAttenders();
    }
 
 }

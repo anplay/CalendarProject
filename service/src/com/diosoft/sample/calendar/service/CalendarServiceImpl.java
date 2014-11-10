@@ -7,6 +7,7 @@ import com.diosoft.sample.calendar.datastore.CalendarDataStore;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -16,6 +17,7 @@ import static java.util.Arrays.asList;
 public class CalendarServiceImpl implements CalendarService {
 
     public static final Logger logger = Logger.getAnonymousLogger();
+    public static final int INTERVAL = 15;
     private final CalendarDataStore dataStore;
 
     public CalendarServiceImpl(CalendarDataStore dataStore) {
@@ -61,8 +63,67 @@ public class CalendarServiceImpl implements CalendarService {
 
     @Override
     public List<Person> getAttenders(UUID uuid) {
-        return dataStore.getAttenders(uuid);
+        return dataStore.getMapEvents().get(uuid).getAttenders();
+    }
+
+    @Override
+    public List<Event> getEventsInTimeRange(LocalDateTime startTime, LocalDateTime endTime) throws RemoteException {
+        List<Event> listOfEvents = new ArrayList<Event>(dataStore.getMapEvents().values());
+
+        for (Event event : listOfEvents) {
+            if ((event.getStartTime().compareTo(startTime) < 0) && (event.getEndTime().compareTo(startTime) < 0)) {
+                listOfEvents.remove(event);
+                continue;
+            }
+            if ((event.getStartTime().compareTo(endTime) > 0) && (event.getEndTime().compareTo(endTime) > 0)) {
+                listOfEvents.remove(event);
+            }
         }
+        return listOfEvents;
+    }
+
+    //suitable time of event for Person, search starts from "start"
+    @Override
+    public List<LocalDateTime> getSuitableTimeForPerson(LocalDateTime start, LocalDateTime end, Person person) throws RemoteException {
+        while (true) {
+            List<Event> list = this.getEventsInTimeRange(start, end);
+            List<Event> listOfPerson = new ArrayList<>();
+            for (Event event : list) {
+                if (event.getAttenders().contains(person)) {
+                    start.plusMinutes(INTERVAL);
+                    end.plusMinutes(INTERVAL);
+                } else {
+                    return Arrays.asList(start, end);
+                }
+            }
+        }
+    }
+
+    //Searches time suitable for all persons from searchList, search starts from "start"
+    @Override
+    public List<LocalDateTime> getSuitableTimeForListOfPersons(LocalDateTime start, LocalDateTime end, List<Person> searchList) throws RemoteException {
+        boolean rezult = false;
+        while (!rezult) {
+            List<LocalDateTime> listTime = new ArrayList<>();
+            for (Person p : searchList) {
+                listTime.add(getSuitableTimeForPerson(start, end, p).get(0));
+            }
+            LocalDateTime comparisonTime = listTime.get(0);
+            for (LocalDateTime time : listTime) {
+                if (time.compareTo(comparisonTime) != 0) {
+                    start.plusMinutes(INTERVAL);
+                    end.plusMinutes(INTERVAL);
+                    rezult = false;
+                    break;
+                } else {
+                    rezult = true;
+                }
+            }
+
+        }
+        return Arrays.asList(start, end);
+    }
+
 
     @Override
     public Event addAttender(UUID uuid, Person... newPersons) {

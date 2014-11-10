@@ -18,6 +18,8 @@ public class CalendarDataStoreImpl implements CalendarDataStore {
 
     private final HashMap<UUID, Event> store = new HashMap<>();
 
+
+
     @Override
     public void publish(Event event) {
         store.put(event.getUuid(), event);
@@ -85,9 +87,7 @@ public class CalendarDataStoreImpl implements CalendarDataStore {
         }
     }
 
-    public List<Person> getAttenders(UUID eventUUID) {
-        return store.get(eventUUID).getAttenders();
-    }
+
 
     private void persistEvent(Event expectedEvent){
 
