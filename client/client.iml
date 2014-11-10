@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="Spring" name="Spring">
-      <configuration>
-        <fileset id="fileset" name="Spring Application Context" removed="false">
-          <file>file://$MODULE_DIR$/../clint/src/applicationContext.xml</file>
-        </fileset>
-      </configuration>
-    </facet>
-  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -16,20 +7,58 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="lib1" level="project" />
+    <orderEntry type="module" module-name="service" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/lib" />
+          <root url="jar://$MODULE_DIR$/../service/lib/junit-4.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/aopalliance-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/mockito-all-1.9.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/commons-logging-1.1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-tx-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-aop-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-jms-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-orm-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-oxm-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-core-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-jdbc-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-test-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-beans-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-aspects-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-context-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-messaging-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-expression-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-instrument-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-context-support-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-instrument-tomcat-4.0.0.RELEASE.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/lib" />
+          <root url="jar://$MODULE_DIR$/../service/lib/junit-4.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/aopalliance-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/mockito-all-1.9.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/commons-logging-1.1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-tx-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-aop-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-jms-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-orm-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-oxm-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-core-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-jdbc-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-test-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-beans-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-aspects-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-context-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-messaging-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-expression-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-instrument-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-context-support-4.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../service/lib/spring-instrument-tomcat-4.0.0.RELEASE.jar!/" />
         </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
-        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="service" />
   </component>
 </module>
 

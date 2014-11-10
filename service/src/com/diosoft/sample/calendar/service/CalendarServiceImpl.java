@@ -7,10 +7,11 @@ import com.diosoft.sample.calendar.datastore.CalendarDataStore;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -62,38 +63,43 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public List<Person> getAttenders(UUID uuid) {
+    public List<Person> getAttenders(UUID uuid) throws RemoteException {
         return dataStore.getMapEvents().get(uuid).getAttenders();
     }
 
     @Override
     public List<Event> getEventsInTimeRange(LocalDateTime startTime, LocalDateTime endTime) throws RemoteException {
         List<Event> listOfEvents = new ArrayList<Event>(dataStore.getMapEvents().values());
-
+        List<Event> removeList = new ArrayList<>();
         for (Event event : listOfEvents) {
             if ((event.getStartTime().compareTo(startTime) < 0) && (event.getEndTime().compareTo(startTime) < 0)) {
-                listOfEvents.remove(event);
+                removeList.add(event);
                 continue;
             }
             if ((event.getStartTime().compareTo(endTime) > 0) && (event.getEndTime().compareTo(endTime) > 0)) {
-                listOfEvents.remove(event);
+                removeList.add(event);
             }
         }
+        listOfEvents.removeAll(removeList);
         return listOfEvents;
     }
 
     //suitable time of event for Person, search starts from "start"
     @Override
     public List<LocalDateTime> getSuitableTimeForPerson(LocalDateTime start, LocalDateTime end, Person person) throws RemoteException {
+        LocalDateTime st = start;
+        LocalDateTime en = end;
         while (true) {
-            List<Event> list = this.getEventsInTimeRange(start, end);
-            List<Event> listOfPerson = new ArrayList<>();
+            List<Event> list = this.getEventsInTimeRange(st, en);
+            if (list.isEmpty()) return Arrays.asList(st, en);
             for (Event event : list) {
+                System.out.println(event.getAttenders().contains(person));
                 if (event.getAttenders().contains(person)) {
-                    start.plusMinutes(INTERVAL);
-                    end.plusMinutes(INTERVAL);
+                    st = st.plusMinutes(INTERVAL);
+                    en = en.plusMinutes(INTERVAL);
+                    break;
                 } else {
-                    return Arrays.asList(start, end);
+                    return Arrays.asList(st, en);
                 }
             }
         }
@@ -111,15 +117,14 @@ public class CalendarServiceImpl implements CalendarService {
             LocalDateTime comparisonTime = listTime.get(0);
             for (LocalDateTime time : listTime) {
                 if (time.compareTo(comparisonTime) != 0) {
-                    start.plusMinutes(INTERVAL);
-                    end.plusMinutes(INTERVAL);
+                    start = start.plusMinutes(INTERVAL);
+                    end = end.plusMinutes(INTERVAL);
                     rezult = false;
                     break;
                 } else {
                     rezult = true;
                 }
             }
-
         }
         return Arrays.asList(start, end);
     }
@@ -141,5 +146,28 @@ public class CalendarServiceImpl implements CalendarService {
         dataStore.publish(newEvent
         );
         return newEvent;
+    }
+
+    @Override
+    public List<Event> searchEventByDateTime(LocalDateTime date1) {
+        List<Event> foundEvents = new ArrayList();
+        Map<UUID, Event> allEvents = dataStore.getMapEvents();
+        logger.info("Keys " + allEvents.keySet());
+        if (allEvents != null || allEvents.size() != 0) {
+            foundEvents.addAll(allEvents.keySet().stream().filter(uuid -> (date1.compareTo(allEvents.get(uuid).getStartTime()) >= 0) && date1.compareTo(allEvents.get(uuid).getEndTime()) < 0).map(this::getEvent).collect(Collectors.toList()));
+            return foundEvents;
+        }
+        throw new NoSuchElementException("Unfortunately cannot retrieve events list to search");
+    }
+
+    @Override
+    public List<Event> searchEventByDateTime(LocalDateTime date1, LocalDateTime date2) {
+        List<Event> foundEvents = new ArrayList();
+        Map<UUID, Event> allEvents = dataStore.getMapEvents();
+        if (allEvents != null || allEvents.size() != 0) {
+            foundEvents.addAll(allEvents.keySet().stream().filter(uuid -> (date1.compareTo(allEvents.get(uuid).getStartTime()) >= 0) && date2.compareTo(allEvents.get(uuid).getEndTime()) <= 0).map(this::getEvent).collect(Collectors.toList()));
+            return foundEvents;
+        }
+        throw new NoSuchElementException("Unfortunately cannot retrieve events list to search");
     }
 }

@@ -1,23 +1,16 @@
 package com.diosoft.sample.calendar.datastore;
 
 import com.diosoft.sample.calendar.common.Event;
-import com.diosoft.sample.calendar.common.Person;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class CalendarDataStoreImpl implements CalendarDataStore {
 
     private final HashMap<UUID, Event> store = new HashMap<>();
-
 
 
     @Override

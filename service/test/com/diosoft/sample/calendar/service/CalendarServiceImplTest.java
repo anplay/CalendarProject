@@ -3,9 +3,11 @@ package com.diosoft.sample.calendar.service;
 import com.diosoft.sample.calendar.common.Event;
 import com.diosoft.sample.calendar.common.Person;
 import com.diosoft.sample.calendar.datastore.CalendarDataStore;
+import com.diosoft.sample.calendar.datastore.CalendarDataStoreImpl;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -299,7 +301,7 @@ public class CalendarServiceImplTest {
        // initialize mocks
        CalendarDataStore dataStore = mock(CalendarDataStore.class);
 
-       when(dataStore.getEventsMap().get(event.getUuid()).getAttenders()).thenReturn(expectedAttenders);
+       when(dataStore.getMapEvents().get(event.getUuid()).getAttenders()).thenReturn(expectedAttenders);
 
        // initialize class to test
        CalendarService service = new CalendarServiceImpl(dataStore);
@@ -311,7 +313,103 @@ public class CalendarServiceImplTest {
        assertEquals(expectedAttenders, returnedAttenders);
 
        // verify mock expectations
-       verify(dataStore).getEventsMap().get(event.getUuid()).getAttenders();
+       verify(dataStore).getMapEvents().get(event.getUuid()).getAttenders();
    }
+
+    @Test
+    public void testGetSuitableTimeForPerson() throws Exception {
+        // initialize variable inputs
+        String inputName = "Event";
+        Person inputPerson1 = new Person.Builder().firstName("NAME").build();
+        Person inputPerson2 = new Person.Builder().firstName("NAME2").build();
+        LocalDateTime s = LocalDateTime.now();
+
+        Event event = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .name(inputName)
+                .attenders(inputPerson1, inputPerson2)
+                .startTime(s)
+                .endTime(s.plusMinutes(10))
+                .build();
+        List<LocalDateTime> expectedResult = new ArrayList<>();
+        expectedResult.add(s.plusMinutes(15));
+        expectedResult.add(expectedResult.get(0).plusMinutes(10));
+        Map<UUID,Event> map = new HashMap<>();
+        map.put(event.getUuid(), event);
+
+        // initialize mocks
+        CalendarDataStore dataStore = mock(CalendarDataStore.class);
+        when(dataStore.getMapEvents()).thenReturn(map);
+        //doReturn(Arrays.asList(event)).when(dataStore.getMapEvents().values());
+
+        // initialize class to test
+        CalendarService service = new CalendarServiceImpl(dataStore);
+
+        // invoke method on class to test
+        List<LocalDateTime> actualResult = service.getSuitableTimeForPerson(s, s.plusMinutes(10), inputPerson1);
+
+        // assert return value
+       assertEquals(expectedResult, actualResult);
+
+        // verify mock expectations
+        verify(dataStore, times(2)).getMapEvents();
+    }
+
+    @Test
+    public void testSearchByDate() throws Exception {
+        // initialize inputs
+        Person inputPerson = new Person.Builder().firstName("aName").build();
+        Person inputNewPerson = new Person.Builder().firstName("aName2").build();
+        List<Person> attenders = Arrays.asList(inputPerson);
+        List<Person> newAttenders = Arrays.asList(inputPerson, inputNewPerson);
+
+        Event Event1 = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .title("Estimation meeting")
+                .name("estimation")
+                .description("scrum... is it OK")
+                .startTime( LocalDateTime.of( 2008, Month.APRIL,  20, 10, 00))
+                .endTime( LocalDateTime.of( 2008, Month.APRIL,  20, 11, 00))
+                .attenders(attenders)
+                .build();
+
+        Event Event2 = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .title("3way chat")
+                .name("meeting")
+                .description("Who should fix the build")
+                .startTime( LocalDateTime.of( 2008, Month.APRIL,  20, 15, 00))
+                .endTime( LocalDateTime.of( 2008, Month.APRIL,  20, 16, 00))
+                .attenders(newAttenders)
+                .build();
+
+        Event Event3 = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .title("3way chat11")
+                .name("meeting112")
+                .description("Details needed")
+                .startTime( LocalDateTime.of( 2008, Month.APRIL,  20, 15, 30))
+                .endTime( LocalDateTime.of( 2008, Month.APRIL,  20, 16, 00))
+                .attenders(newAttenders)
+                .build();
+
+        CalendarDataStore dataStore =new CalendarDataStoreImpl();
+        CalendarService service = new CalendarServiceImpl(dataStore);
+
+        service.addEvent(Event1);
+        service.addEvent(Event2);
+        service.addEvent(Event3);
+
+        List<Event> returnValue = service.searchEventByDateTime(LocalDateTime.of( 2008, Month.APRIL,  20, 15, 30));
+        ArrayList expectedListOfEvent = new ArrayList();
+        expectedListOfEvent.add(Event2);
+        expectedListOfEvent.add(Event3);
+
+        returnValue.removeAll(expectedListOfEvent);
+
+        assertEquals(0, returnValue.size());
+
+    }
+
 
 }
