@@ -5,7 +5,9 @@ import com.diosoft.sample.calendar.common.Person;
 import com.diosoft.sample.calendar.datastore.CalendarDataStore;
 
 import java.rmi.RemoteException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -170,4 +172,27 @@ public class CalendarServiceImpl implements CalendarService {
         }
         throw new NoSuchElementException("Unfortunately cannot retrieve events list to search");
     }
+
+    @Override
+    public List<Event> isAttenderAvailable(Person person, LocalDateTime dateTime) throws RemoteException {
+        if(dateTime != null && person != null) {
+            List<Event> foundEvents = new ArrayList<>();
+            Map<UUID, Event> allEvents = dataStore.getMapEvents();
+            foundEvents.addAll(allEvents.keySet().stream().filter(uuid -> (allEvents.get(uuid).getStartTime().compareTo(dateTime) <= 0) && (allEvents.get(uuid).getEndTime().compareTo(dateTime) >= 0)).map(allEvents::get).collect(Collectors.toList()));
+            return foundEvents;
+        }
+        return new ArrayList<Event>(){};
+    }
+
+    @Override
+    public List<Event> isAvailableToday(Person person, LocalTime time) throws RemoteException {
+        if(time != null && person != null) {
+            List<Event> foundEvents = new ArrayList<>();
+            Map<UUID, Event> allEvents = dataStore.getMapEvents();
+            foundEvents.addAll(allEvents.keySet().stream().filter(uuid -> (allEvents.get(uuid).getStartTime().toLocalDate().isEqual(LocalDate.now()) && allEvents.get(uuid).getStartTime().toLocalTime().compareTo(time) <= 0) && (allEvents.get(uuid).getEndTime().toLocalTime().compareTo(time) >= 0)).map(allEvents::get).collect(Collectors.toList()));
+            return foundEvents;
+        }
+        return new ArrayList<Event>(){};
+    }
+
 }

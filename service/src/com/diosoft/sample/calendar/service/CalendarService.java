@@ -6,6 +6,7 @@ import com.diosoft.sample.calendar.common.Person;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,5 +32,9 @@ public interface CalendarService extends Remote {
 
     List<Event> searchEventByDateTime(LocalDateTime date1) throws RemoteException;
 
-    List<Event> searchEventByDateTime(LocalDateTime date1, LocalDateTime date2);
+    List<Event> searchEventByDateTime(LocalDateTime date1, LocalDateTime date2) throws RemoteException;
+
+    List<Event> isAttenderAvailable(Person person, LocalDateTime dateTime) throws RemoteException;
+
+    List<Event> isAvailableToday(Person person, LocalTime time) throws RemoteException;
 }

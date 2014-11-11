@@ -5,14 +5,16 @@ import com.diosoft.sample.calendar.common.Person;
 import com.diosoft.sample.calendar.datastore.CalendarDataStore;
 import com.diosoft.sample.calendar.datastore.CalendarDataStoreImpl;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.*;
+import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CalendarServiceImplTest {
@@ -408,8 +410,240 @@ public class CalendarServiceImplTest {
         returnValue.removeAll(expectedListOfEvent);
 
         assertEquals(0, returnValue.size());
+    }
 
+    @Test
+    public void testIsAttenderAvailable() throws Exception {
+        // initialize variable inputs
+        LocalDateTime dateTime = LocalDateTime.of(2014, Month.NOVEMBER,  12, 10, 45);
+        Person person1 = new Person.Builder().firstName("Anton").secondName("Djedaev").build();
+        Person person2 = new Person.Builder().firstName("Sasha").secondName("Yodavich").build();
+        List<Person> attenders = Arrays.asList(person1,person2);
+
+        Event eventCoffee = new Event.Builder()
+                                .setId(UUID.randomUUID())
+                                .title("Coffee break")
+                                .name("Coffee break - room 237")
+                                .description("New coffee, let us taste it")
+                                .startTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 10, 30))
+                                .endTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 11, 00))
+                                .attenders(attenders)
+                                .build();
+
+        Event eventPingPong = new Event.Builder()
+                                .setId(UUID.randomUUID())
+                                .title("Ping Pong")
+                                .name("Ping Pong - room 200")
+                                .description("Ping Pong time!")
+                                .startTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 10, 45))
+                                .endTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 11, 00))
+                                .attenders(attenders)
+                                .build();
+
+        Map<UUID, Event> store = new HashMap<>();
+        store.put(eventCoffee.getUuid(), eventCoffee);
+        store.put(eventPingPong.getUuid(), eventPingPong);
+
+        // initialize mocks
+        CalendarDataStore dataStore = mock(CalendarDataStore.class);
+        when(dataStore.getMapEvents()).thenReturn(store);
+
+        // initialize class to test
+        CalendarService service = new CalendarServiceImpl(dataStore);
+
+        // invoke method on class to test
+        List<Event> actualResult = service.isAttenderAvailable(person1,dateTime);
+
+        // assert return value
+        assertThat(actualResult).contains(eventCoffee,eventPingPong);
+
+        // verify mock expectations
+        verify(dataStore).getMapEvents();
+    }
+
+    @Test
+    public void testIsAttenderAvailableWithUnmatchedDateTime() throws Exception {
+        // initialize variable inputs
+        LocalDateTime dateTime = LocalDateTime.of(2014, Month.NOVEMBER,  12, 12, 00);
+        Person person1 = new Person.Builder().firstName("Anton").secondName("Djedaev").build();
+        Person person2 = new Person.Builder().firstName("Sasha").secondName("Yodavich").build();
+        List<Person> attenders = Arrays.asList(person1,person2);
+
+        Event eventCoffee = new Event.Builder()
+                                .setId(UUID.randomUUID())
+                                .title("Coffee break")
+                                .name("Coffee break - room 237")
+                                .description("New coffee, let us taste it")
+                                .startTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 11, 45))
+                                .endTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 11, 59))
+                                .attenders(attenders)
+                                .build();
+
+        Event eventPingPong = new Event.Builder()
+                                .setId(UUID.randomUUID())
+                                .title("Ping Pong")
+                                .name("Ping Pong - room 202")
+                                .description("Ping Pong time!")
+                                .startTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 12, 1))
+                                .endTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 13, 00))
+                                .attenders(attenders)
+                                .build();
+
+        Map<UUID, Event> store = new HashMap<>();
+        store.put(eventCoffee.getUuid(), eventCoffee);
+        store.put(eventPingPong.getUuid(), eventPingPong);
+
+        // initialize mocks
+        CalendarDataStore dataStore = mock(CalendarDataStore.class);
+        when(dataStore.getMapEvents()).thenReturn(store);
+
+        // initialize class to test
+        CalendarService service = new CalendarServiceImpl(dataStore);
+
+        // invoke method on class to test
+        List<Event> actualResult = service.isAttenderAvailable(person1,dateTime);
+
+        // assert return value
+        assertThat(actualResult).doesNotContain(eventCoffee, eventPingPong);
+
+        // verify mock expectations
+        verify(dataStore).getMapEvents();
+    }
+
+    @Test
+    public void testIsAttenderAvailableWithNull() throws Exception {
+        // initialize variable inputs
+        LocalDateTime nullDateTime = null;
+        Person nullPerson = null;
+        Person person2 = new Person.Builder().firstName("Sasha").secondName("Yodavich").build();
+        List<Person> attenders = Arrays.asList(person2);
+
+        Event eventCoffee = new Event.Builder()
+                                .setId(UUID.randomUUID())
+                                .title("Coffee break")
+                                .name("Coffee break - room 237")
+                                .description("New coffee, let us taste it")
+                                .startTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 10, 30))
+                                .endTime(LocalDateTime.of(2014, Month.NOVEMBER, 12, 11, 00))
+                                .attenders(attenders)
+                                .build();
+
+        Map<UUID, Event> store = new HashMap<>();
+        store.put(eventCoffee.getUuid(), eventCoffee);
+
+        // initialize mocks
+        CalendarDataStore dataStore = mock(CalendarDataStore.class);
+        when(dataStore.getMapEvents()).thenReturn(store);
+
+        // initialize class to test
+        CalendarService service = new CalendarServiceImpl(dataStore);
+
+        // invoke method on class to test
+        List<Event> actualResult = service.isAttenderAvailable(nullPerson,nullDateTime);
+
+        // assert return value
+        assertThat(actualResult).isEmpty();
+
+        // verify mock expectations
+        verify(dataStore, never()).getMapEvents();
+    }
+
+    @Test
+    public void testIsAvailableToday() throws Exception {
+        // initialize variable inputs
+        LocalTime time = LocalTime.of(7, 30);
+        Person person1 = new Person.Builder().firstName("Anton").secondName("Djedaev").build();
+        Person person2 = new Person.Builder().firstName("Sasha").secondName("Yodavich").build();
+        List<Person> attenders = Arrays.asList(person1,person2);
+
+        Event eventCoffee = new Event.Builder()
+                                .setId(UUID.randomUUID())
+                                .title("Coffee break")
+                                .name("Coffee break - room 237")
+                                .description("New coffee, let us taste it")
+                                .startTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 25)))
+                                .endTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 40)))
+                                .attenders(attenders)
+                                .build();
+
+        Event eventPingPong = new Event.Builder()
+                                .setId(UUID.randomUUID())
+                                .title("Ping Pong")
+                                .name("Ping Pong - room 200")
+                                .description("Ping Pong time!")
+                                .startTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 31)))
+                                .endTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 0)))
+                                .attenders(attenders)
+                                .build();
+
+        Map<UUID, Event> store = new HashMap<>();
+        store.put(eventCoffee.getUuid(), eventCoffee);
+        store.put(eventPingPong.getUuid(), eventPingPong);
+
+        // initialize mocks
+        CalendarDataStore dataStore = mock(CalendarDataStore.class);
+        when(dataStore.getMapEvents()).thenReturn(store);
+
+        // initialize class to test
+        CalendarService service = new CalendarServiceImpl(dataStore);
+
+        // invoke method on class to test
+        List<Event> actualResult = service.isAvailableToday(person1,time);
+
+        // assert return value
+        assertThat(actualResult).contains(eventCoffee);
+
+        // verify mock expectations
+        verify(dataStore).getMapEvents();
     }
 
 
+    @Test
+    public void testIsAvailableTodayUnmatchedTime() throws Exception {
+        // initialize variable inputs
+        LocalTime time = LocalTime.of(0, 0);
+        Person person1 = new Person.Builder().firstName("Anton").secondName("Djedaev").build();
+        Person person2 = new Person.Builder().firstName("Sasha").secondName("Yodavich").build();
+        List<Person> attenders = Arrays.asList(person1,person2);
+
+        Event eventCoffee = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .title("Coffee break")
+                .name("Coffee break - room 237")
+                .description("New coffee, let us taste it")
+                .startTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 0)))
+                .endTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 30)))
+                .attenders(attenders)
+                .build();
+
+        Event eventPingPong = new Event.Builder()
+                .setId(UUID.randomUUID())
+                .title("Ping Pong")
+                .name("Ping Pong - room 200")
+                .description("Ping Pong time!")
+                .startTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 31)))
+                .endTime(LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 0)))
+                .attenders(attenders)
+                .build();
+
+        Map<UUID, Event> store = new HashMap<>();
+        store.put(eventCoffee.getUuid(), eventCoffee);
+        store.put(eventPingPong.getUuid(), eventPingPong);
+
+        // initialize mocks
+        CalendarDataStore dataStore = mock(CalendarDataStore.class);
+        when(dataStore.getMapEvents()).thenReturn(store);
+
+        // initialize class to test
+        CalendarService service = new CalendarServiceImpl(dataStore);
+
+        // invoke method on class to test
+        List<Event> actualResult = service.isAvailableToday(person1,time);
+
+        // assert return value
+        assertThat(actualResult).isEmpty();
+
+        // verify mock expectations
+        verify(dataStore).getMapEvents();
+    }
 }

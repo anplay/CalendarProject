@@ -9,6 +9,8 @@ import static java.util.Arrays.asList;
 
 public class Event implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final UUID uuid;
     private final String title;
     private final String name;
