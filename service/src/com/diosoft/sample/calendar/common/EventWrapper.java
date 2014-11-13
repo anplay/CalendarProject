@@ -12,23 +12,28 @@ import java.util.UUID;
 @XmlRootElement
 public class EventWrapper {
     private static final long serialVersionUID = 1L;
-    private UUID uuid;
+    private String uuid;
     private String title;
     private String name;
     private String description;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private List<Person> attenders;
+    private String startTime;
+    private String endTime;
+    private String attenders = null;
 
     public EventWrapper(Event event) {
-        uuid = event.getUuid();
+        uuid = event.getUuid().toString();
         title = event.getTitle();
         name = event.getName();
         description = event.getDescription();
-        startTime = event.getStartTime();
-        endTime = event.getEndTime();
-        attenders = event.getAttenders();
-
+        startTime = event.getStartTime().toString();
+        endTime = event.getEndTime().toString();
+        for (Person person: event.getAttenders()) {
+            if (attenders == null) {
+                attenders = person.getEmail();
+            } else {
+                attenders = attenders + ", " + person.getEmail();
+            }
+        }
     }
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -36,7 +41,7 @@ public class EventWrapper {
 
     @XmlElement
     public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+        this.uuid = uuid.toString();
     }
 
     @XmlElement
@@ -56,20 +61,26 @@ public class EventWrapper {
 
     @XmlElement
     public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
+        this.startTime = startTime.toString();
     }
 
     @XmlElement
     public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+        this.endTime = endTime.toString();
     }
 
     @XmlElement
-    public void setAttenders(List<Person> attenders) {
-        this.attenders = attenders;
+    public void setAttenders(List<Person> attendersList) {
+        for (Person person: attendersList) {
+            if (attenders == null) {
+                this.attenders = person.getEmail();
+            } else {
+                this.attenders = this.attenders + ", " + person.getEmail();
+            }
+        }
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
@@ -85,15 +96,15 @@ public class EventWrapper {
         return description;
     }
 
-    public LocalDateTime getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public List<Person> getAttenders() {
+    public String getAttenders() {
         return attenders;
     }
 
