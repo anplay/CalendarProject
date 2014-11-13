@@ -9,4 +9,11 @@
         <property name="serviceInterface" value="com.diosoft.sample.calendar.service.CalendarService"/>
     </bean>
 
+    <bean id="jaxbParser" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+        <property name="serviceUrl" value="rmi://localhost:1199/JAXBParserService"/>
+        <property name="serviceInterface" value="com.diosoft.sample.calendar.parser.Parser"/>
+    </bean>
+
+
+
 </beans>

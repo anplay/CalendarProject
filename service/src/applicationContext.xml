@@ -9,11 +9,23 @@
         <constructor-arg ref="calendarDataStore"/>
     </bean>
 
+    <bean id="jaxbParser" class="com.diosoft.sample.calendar.parser.jaxbimpl.JAXBParser"/>
+
+
+    <!-- Spring RMI through the use of RmiProxyFactoryBean and the RmiServiceExporter-->
     <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
         <!-- does not necessarily have to be the same name as the bean to be exported -->
         <property name="serviceName" value="CalendarService"/>
         <property name="service" ref="calendarService"/>
         <property name="serviceInterface" value="com.diosoft.sample.calendar.service.CalendarService"/>
+        <!-- defaults to 1099 -->
+        <property name="registryPort" value="1199"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="JAXBParserService"/>
+        <property name="service" ref="jaxbParser"/>
+        <property name="serviceInterface" value="com.diosoft.sample.calendar.parser.Parser"/>
         <!-- defaults to 1099 -->
         <property name="registryPort" value="1199"/>
     </bean>
