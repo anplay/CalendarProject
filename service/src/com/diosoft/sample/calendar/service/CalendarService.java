@@ -3,6 +3,8 @@ package com.diosoft.sample.calendar.service;
 import com.diosoft.sample.calendar.common.Event;
 import com.diosoft.sample.calendar.common.Person;
 
+import javax.xml.bind.JAXBException;
+import java.io.FileNotFoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
@@ -14,9 +16,9 @@ public interface CalendarService extends Remote {
 
     void createEvent(String title, String name, String description, LocalDateTime startDate, LocalDateTime endDate, List<Person> attenders) throws RemoteException;
 
-    void addEvent(Event event) throws RemoteException;
+    void addEvent(Event event) throws RemoteException, JAXBException, FileNotFoundException;
 
-    Event removeEvent(UUID uuid) throws RemoteException;
+    Event removeEvent(UUID uuid) throws Exception;
 
     Event addAttender(UUID uuid, Person... newPersons) throws RemoteException;
 

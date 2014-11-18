@@ -1,5 +1,7 @@
 package com.diosoft.sample.calendar.common;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.time.LocalDateTime;
@@ -9,15 +11,23 @@ import java.util.UUID;
 /**
  * Created by dev-anplay on 11.11.2014.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class EventWrapper {
     private static final long serialVersionUID = 1L;
+    @XmlElement
     private String uuid;
+    @XmlElement
     private String title;
+    @XmlElement
     private String name;
+    @XmlElement
     private String description;
+    @XmlElement
     private String startTime;
+    @XmlElement
     private String endTime;
+    @XmlElement
     private String attenders = null;
 
     public EventWrapper(Event event) {
@@ -27,55 +37,53 @@ public class EventWrapper {
         description = event.getDescription();
         startTime = event.getStartTime().toString();
         endTime = event.getEndTime().toString();
-        for (Person person: event.getAttenders()) {
-            if (attenders == null) {
-                attenders = person.getEmail();
-            } else {
-                attenders = attenders + ", " + person.getEmail();
+        if(event.getAttenders() != null){
+            for (Person person : event.getAttenders()) {
+                if (attenders == null) {
+                    attenders = new StringBuilder(person.getFirstName() + ",").append(person.getSecondName() + ",").append(person.getEmail()).toString();
+                } else {
+                    attenders = attenders + ", " + new StringBuilder(person.getFirstName() + ",").append(person.getSecondName() + ",").append(person.getEmail()).toString();
+                }
             }
         }
     }
+    private EventWrapper() {
+    }
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
 
-    @XmlElement
     public void setUuid(UUID uuid) {
         this.uuid = uuid.toString();
     }
 
-    @XmlElement
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @XmlElement
     public void setName(String name) {
         this.name = name;
     }
 
-    @XmlElement
     public void setDescription(String description) {
         this.description = description;
     }
 
-    @XmlElement
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime.toString();
     }
 
-    @XmlElement
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime.toString();
     }
 
-    @XmlElement
-    public void setAttenders(List<Person> attendersList) {
-        for (Person person: attendersList) {
+    public void setAttenders(List<PersonWrapper> attendersList) {
+        for (PersonWrapper person: attendersList) {
             if (attenders == null) {
-                this.attenders = person.getEmail();
+                this.attenders = new StringBuilder(person.getFirstName() + ",").append(person.getSecondName() + ",").append(person.getEmail()).toString();
             } else {
-                this.attenders = this.attenders + ", " + person.getEmail();
+                this.attenders = this.attenders + ", " + new StringBuilder(person.getFirstName() + ",").append(person.getSecondName() + ",").append(person.getEmail()).toString();
             }
         }
     }
@@ -108,6 +116,46 @@ public class EventWrapper {
         return attenders;
     }
 
+    @Override
+    public String toString() {
+        return "EventWrapper{" +
+                "uuid='" + uuid + '\'' +
+                ", title='" + title + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", attenders='" + attenders + '\'' +
+                '}';
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        EventWrapper that = (EventWrapper) o;
+
+        if (attenders != null ? !attenders.equals(that.attenders) : that.attenders != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (endTime != null ? !endTime.equals(that.endTime) : that.endTime != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) return false;
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
+        result = 31 * result + (endTime != null ? endTime.hashCode() : 0);
+        result = 31 * result + (attenders != null ? attenders.hashCode() : 0);
+        return result;
+    }
 }

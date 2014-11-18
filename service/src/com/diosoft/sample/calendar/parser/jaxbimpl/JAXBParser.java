@@ -1,63 +1,44 @@
 package com.diosoft.sample.calendar.parser.jaxbimpl;
 
+
 import com.diosoft.sample.calendar.common.Event;
-import com.diosoft.sample.calendar.parser.Parser;
-import com.sun.jmx.remote.internal.Unmarshal;
-import org.w3c.dom.events.EventException;
+import com.diosoft.sample.calendar.common.EventWrapper;
+
 
 import javax.xml.bind.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
+import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.FormatFlagsConversionMismatchException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 
 /**
  * Created by home on 11/12/2014.
  */
-public class JAXBParser implements Parser {
-    @Override
-    public void marshallEvent(File file, Event event) throws DataBindingException, JAXBException, FileNotFoundException, SecurityException {
-        if(file != null && file.canWrite() && event != null) {
-            JAXBContext jaxbContext = JAXBContext.newInstance(com.diosoft.sample.calendar.common.Event.class);
-            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            jaxbMarshaller.marshal(event, file);
-            jaxbMarshaller.marshal(event, System.out);
-        }else{
-            throw new FileNotFoundException("The File or Event is null otherwise the write operation is prohibited");
-        }
+public class JAXBParser {
+
+    static private final ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+    public static void marshallEvent(EventWrapper event, File file) throws DataBindingException, JAXBException, FileNotFoundException, SecurityException {
+        threadPool.submit(new WriteTask(event,file));
     }
 
-    @Override
-    public Event unmarshallEvent(File file) throws JAXBException, FileNotFoundException {
-        if(file.exists() && file.canRead()) {
-            JAXBContext jaxbContext = JAXBContext.newInstance(com.diosoft.sample.calendar.common.Event.class);
-            Unmarshaller jaxbUnmarshall = jaxbContext.createUnmarshaller();
-            return (Event) jaxbUnmarshall.unmarshal(file);
-        } else{
-            throw new FileNotFoundException("The File or Event is null otherwise the read operation is prohibited");
-        }
+    public static EventWrapper unmarshallEvent(File file) throws JAXBException, FileNotFoundException, ExecutionException, InterruptedException {
+         do {
+             if (Files.exists(Paths.get("store\\" + file.getName()))) {
+                 Future<EventWrapper> result = threadPool.submit(new ReadTask(file));
+                 System.out.println(result.get().toString());
+                 return result.get();
+             }
+         }while(true);
     }
 
-    @Override
-    public void removeEvent(Event event) throws Exception {
-        if(event != null){
-            int counter = 0;
-            File[] listOfFiles = new File("store\\").listFiles();
-            if(listOfFiles != null) {
-                for (File f : listOfFiles) {
-                    Event eventObj = unmarshallEvent(f);
-                    if (eventObj.equals(event))
-                        if(f.delete())
-                            counter++;
-                }
-                System.out.println(counter+ " files have been removed");
-            }
-        } else {
-            throw new Exception("Event is null, please specify the correct event"); //xml file corresponding to this Event can't be found.
-        }
-
+    public static void removeEvent(EventWrapper event) throws Exception {
+        threadPool.submit(new RemoveTask(event));
     }
 
 }

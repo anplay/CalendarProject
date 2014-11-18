@@ -1,9 +1,14 @@
 package com.diosoft.sample.calendar.service;
 
 import com.diosoft.sample.calendar.common.Event;
+import com.diosoft.sample.calendar.common.EventWrapper;
 import com.diosoft.sample.calendar.common.Person;
 import com.diosoft.sample.calendar.datastore.CalendarDataStore;
+import com.diosoft.sample.calendar.parser.jaxbimpl.JAXBParser;
 
+import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -46,21 +52,25 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public void addEvent(Event event) throws RemoteException {
-
+    public void addEvent(Event event) throws RemoteException, JAXBException, FileNotFoundException {
         dataStore.publish(event);
-
+       // JAXBParser.marshallEvent(new EventWrapper(event),new File(event.getUuid()+".xml"));
         logger.info("Added event on service side " + event.getName());
     }
 
     @Override
-    public Event removeEvent(UUID uuid) {
+    public Event removeEvent(UUID uuid) throws Exception {
+       // JAXBParser.removeEvent(new EventWrapper(new Event.Builder().setId(uuid).build()));
         return dataStore.remove(uuid);
-
     }
 
     @Override
     public Event getEvent(UUID uuid) {
+//        try {
+//            JAXBParser.unmarshallEvent(new File(uuid.toString() + ".xml"));
+//        } catch (JAXBException | FileNotFoundException | ExecutionException |InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return dataStore.getEvent(uuid);
     }
 
